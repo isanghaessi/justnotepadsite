@@ -32,6 +32,10 @@ function UseMemoStorage() {
         getAllDatas();
     }, []);
 
+    useEffect(() => {
+        saveData();
+    }, [data]);
+
     const getAllDatas = () => setSavedDatas(Object.entries({...localStorage}).filter(([_key, _]) => _key && _key.startsWith(MEMO_STORAGE_KEY))
         .map(([_key, _value]) => [_key, JSON.parse(_value)]));
 
@@ -62,36 +66,43 @@ function UseMemoStorage() {
             toast.error(`Save memos fail!`);
         }
 
-        refresh();
-    }, [memoStorageKey, memos]);
+        getAllDatas();
+    }, [memoStorageKey, title, memos]);
 
     const clearData = () => {
         savedDatas.forEach(([_key, _]) => localStorage.removeItem(_key));
-        refresh();
-    }
 
-    const refresh = () => {
+        setMemoStorageKey(getNewMemoStorageKey());
+        setTitle(getDefaultTitle());
+        setMemos(getDefaultMemos());
+
         getAllDatas();
-        loadData(memoStorageKey);
     }
 
     const getDashboard = () => (
         <div className={'w-100'}>
             <div className={'d-flex w-100 align-items-center justify-content-between p-2'}>
-                <div className={'fs-3'}>Your saved notes here</div>
+                <div className={'w-75'}>
+                    <div className={'d-flex w-100 align-items-center justify-content-between'}>
+                        <div className={'fs-3'}>Your saved notes here</div>
+                        <div className={'link-secondary'}>Your notes will be saved automatically. But, you can save it manually</div>
+                    </div>
+                    <div className={'link-danger'}>Note: Your notes will be saved in your browser. It will not be deleted when you close the browser.</div>
+                    <div className={'link-danger'}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;But, it can be deleted somehow. So, please keep your notes in a safe place.</div>
+                </div>
                 <div className={'d-flex'}>
                     <button type="button" className="btn btn-outline-dark m-1" onClick={saveData}>Save</button>
                     <button type="button" className="btn btn-outline-danger m-1" onClick={clearData}>Clear All</button>
                 </div>
             </div>
             <div className={'d-flex flex-column align-items-baseline overflow-auto'}
-            style={{
-                maxHeight: '300px',
-            }}>
+                 style={{
+                     maxHeight: '300px',
+                 }}>
                 {savedDatas.length === 0
                     ? <div>... No saved notes</div>
                     : savedDatas.map(([_key, _data]) =>
-                        <button type="button" className="btn btn-link" key={_key} onClick={() => loadData(_key)}>{`${_data.title} - [Last Syncd Time] ${_data.lastSyncedDateTime}`}</button>)
+                        <button type="button" className="btn btn-link  m-1" key={_key} onClick={() => loadData(_key)}>{`${_data.title} - [Last Syncd Time] ${_data.lastSyncedDateTime}`}</button>)
                 }
             </div>
         </div>
@@ -102,7 +113,8 @@ function UseMemoStorage() {
         dashboard: getDashboard(),
         data,
         setTitle,
-        setMemos
+        setMemos,
+        saveData,
     }
 }
 

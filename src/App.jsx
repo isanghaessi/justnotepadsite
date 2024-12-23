@@ -26,6 +26,26 @@ function App() {
     const rowCount = useMemo(() => Math.ceil(memoCount / COLUMN_COUNT), [memoCount]);
     const isOnAnyDelete = useMemo(() => memos.filter((memo) => memo.isOnDelete).length > 0, [memos]);
 
+     const onCancelRootListenerCallback = useCallback((event) => {
+        if (!isOnAnyDelete) {
+            return;
+        }
+
+        if (event.key === 'Escape') {
+            onDeleteCancel();
+        }
+    }, [isOnAnyDelete]);
+
+    useEffect(() => {
+        const $root = document.getElementById('root');
+
+        $root.addEventListener('keydown', onCancelRootListenerCallback);
+
+        return () => {
+            $root.removeEventListener('keydown', onCancelRootListenerCallback);
+        };
+    }, [isOnAnyDelete]);
+
     const onMemoValueChange = (index, value) => {
         memos[index].value = value;
         setMemos([...memos]);
@@ -48,26 +68,6 @@ function App() {
             })
         ));
     }
-
-    useEffect(() => {
-        const $root = document.getElementById('root');
-
-        $root.addEventListener('keydown', onCancelRootListenerCallback);
-
-        return () => {
-            $root.removeEventListener('keydown', onCancelRootListenerCallback);
-        };
-    }, [isOnAnyDelete]);
-
-    const onCancelRootListenerCallback = useCallback((event) => {
-        if (!isOnAnyDelete) {
-            return;
-        }
-
-        if (event.key === 'Escape') {
-            onDeleteCancel();
-        }
-    }, [isOnAnyDelete]);
 
     const onTitleChange = (event) => {
         const newTitle = event.target.value;
@@ -98,7 +98,7 @@ function App() {
                 <div style={{
                     fontSize: '0.8rem',
                 }}
-                     className={'link-danger'}>you can change title by click title!
+                     className={'link-secondary'}>You can change title by click!
                 </div>
             </div>
             <button type="button" className="btn btn-dark" onClick={() => setMemos((previousMemos) => [...previousMemos, {...INITIAL_MEMO}])}>+ Add Note</button>
