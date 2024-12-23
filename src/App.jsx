@@ -1,6 +1,9 @@
-import {useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo} from "react";
 import Memo from "./components/Memo.jsx";
 import ConfirmModal from "./components/ConfirmModal.jsx";
+import RightArrowSvg from './assets/right-arrow.svg?react';
+import useMemoStorage from "./hooks/UseMemoStorage.jsx";
+import ContentEditable from "react-contenteditable";
 
 const COLUMN_COUNT = 2;
 const INITIAL_MEMO = {
@@ -9,8 +12,16 @@ const INITIAL_MEMO = {
 }
 
 function App() {
-    const [memos, setMemos] = useState([{...INITIAL_MEMO}]);
+    const {
+        toastContainer,
+        dashboard,
+        data,
+        setTitle,
+        setMemos,
+    } = useMemoStorage();
 
+    const memos = useMemo(() => data.memos, [data]);
+    const title = useMemo(() => data.title, [data]);
     const memoCount = useMemo(() => memos.length, [memos]);
     const rowCount = useMemo(() => Math.ceil(memoCount / COLUMN_COUNT), [memoCount]);
     const isOnAnyDelete = useMemo(() => memos.filter((memo) => memo.isOnDelete).length > 0, [memos]);
@@ -30,24 +41,75 @@ function App() {
     }
 
     const onDeleteCancel = () => {
-        memos.forEach((memo) => memo.isOnDelete = false);
-        setMemos([...memos]);
+        setMemos((previousMemos) => previousMemos.map((memo) =>
+            ({
+                ...memo,
+                isOnDelete: false
+            })
+        ));
+    }
+
+    useEffect(() => {
+        const $root = document.getElementById('root');
+
+        $root.addEventListener('keydown', onCancelRootListenerCallback);
+
+        return () => {
+            $root.removeEventListener('keydown', onCancelRootListenerCallback);
+        };
+    }, [isOnAnyDelete]);
+
+    const onCancelRootListenerCallback = useCallback((event) => {
+        if (!isOnAnyDelete) {
+            return;
+        }
+
+        if (event.key === 'Escape') {
+            onDeleteCancel();
+        }
+    }, [isOnAnyDelete]);
+
+    const onTitleChange = (event) => {
+        const newTitle = event.target.value;
+
+        if (!newTitle) {
+            return;
+        }
+
+        setTitle(newTitle.replace(/<br>/g, ''));
     }
 
     return <div className={'position-relative min-vw-100 min-vh-100 p-5 d-flex flex-column align-items-center'}>
         <nav className={'navbar navbar-light w-100'}>
-            <a className={'navbar-brand fs-2'} href={'/'}>Just Notepad</a>
+            <a className={'navbar-brand fs-1'} href={'/'}>JustNotepad.site</a>
         </nav>
-        <div className={'align-self-end d-flex justify-content-between'}>
+        <div className={'d-flex flex-row w-100 align-items-center justify-content-between m-3'}>
+            <div>
+                <div className={'d-flex'}>
+                    <lebel className={'fs-3'}>Title:&nbsp;</lebel>
+                    <ContentEditable
+                        html={title}
+                        onChange={onTitleChange}
+                        onkeydown={(event) => event.preventDefault()}
+                        tagName={'span'}
+                        className={'fs-3'}
+                    />
+                </div>
+                <div style={{
+                    fontSize: '0.8rem',
+                }}
+                     className={'link-danger'}>you can change title by click title!
+                </div>
+            </div>
             <button type="button" className="btn btn-dark" onClick={() => setMemos((previousMemos) => [...previousMemos, {...INITIAL_MEMO}])}>+ Add Note</button>
         </div>
+        <div className={'align-self-end d-flex justify-content-between m-3'}>
+        </div>
         {memoCount === 0
-            ? <>
-                <div className={'w-100 d-flex justify-content-center'}>
-                    <h4>... Add Some Notes!</h4>
-                </div>
-            </>
-            : <div className={'contatiner w-100'}>
+            ? <div className={'w-100 d-flex justify-content-center'}>
+                <h4>... Add Some Notes!&nbsp;&nbsp;<RightArrowSvg width={'1rem'} height={'1rem'}/></h4>
+            </div>
+            : <div className={'w-100'}>
                 {Array.from({length: rowCount}, (_, i) => i).map((i) => (
                     <div className={'row'} key={i}>
                         <div className={'col'}>
@@ -59,7 +121,11 @@ function App() {
                     </div>)
                 )}
             </div>}
+        <div className={'w-100'}>
+            {dashboard}
+        </div>
         <ConfirmModal isShow={isOnAnyDelete} onConfirm={onDeleteConfirm} onCancel={onDeleteCancel}/>
+        {toastContainer}
     </div>
 }
 

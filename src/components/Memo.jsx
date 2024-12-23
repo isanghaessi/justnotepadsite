@@ -9,6 +9,10 @@ function Memo({index, value, onChange, isOnDelete, onDelete}) {
         onChange(index, memo);
     }, [memo]);
 
+    useEffect(() => {
+        setMemo(value);
+    }, [value]);
+
     return <div className={'p-1'}>
         <textarea className={classNames('w-100', {'border-danger border-3': isOnDelete})} style={{height: '200px'}} value={memo} onChange={(event) => setMemo(event.target.value)}/>
         <button type="button" className="btn float-end m-0 p-0">
