@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useMemo} from "react";
 import Memo from "./components/Memo.jsx";
 import ConfirmModal from "./components/ConfirmModal.jsx";
-import RightArrowSvg from './assets/right-arrow.svg?react';
+import RightArrowBoldSvg from './assets/right-arrow-bold.svg?react';
 import useMemoStorage from "./hooks/UseMemoStorage.jsx";
 import ContentEditable from "react-contenteditable";
 
@@ -107,7 +107,7 @@ function App() {
         </div>
         {memoCount === 0
             ? <div className={'w-100 d-flex justify-content-center'}>
-                <h4>... Add Some Notes!&nbsp;&nbsp;<RightArrowSvg width={'1rem'} height={'1rem'}/></h4>
+                <h4>... Add Some Notes!&nbsp;&nbsp;<RightArrowBoldSvg width={'1rem'} height={'1rem'}/></h4>
             </div>
             : <div className={'w-100'}>
                 {Array.from({length: rowCount}, (_, i) => i).map((i) => (

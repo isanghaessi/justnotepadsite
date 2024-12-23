@@ -2,6 +2,8 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 import {DateTimeFormatter, LocalDateTime} from "js-joda";
 import {v4 as uuidv4} from "uuid";
 import {toast, ToastContainer} from "react-toastify";
+import RightArrowSvg from '../assets/right-arrow.svg?react';
+
 
 const MEMO_STORAGE_KEY = 'JUST_MEMO_PAD_SITE_MEMOS';
 const INITIAL_MEMO = {
@@ -85,7 +87,7 @@ function UseMemoStorage() {
                 <div className={'w-75'}>
                     <div className={'d-flex w-100 align-items-center justify-content-between'}>
                         <div className={'fs-3'}>Your saved notes here</div>
-                        <div className={'link-secondary'}>Your notes will be saved automatically. But, you can save it manually</div>
+                        <div className={'link-secondary'}>Your notes will be saved automatically. But, you can save it manually&nbsp;<RightArrowSvg width={'1rem'} height={'1rem'}/></div>
                     </div>
                     <div className={'link-danger'}>Note: Your notes will be saved in your browser. It will not be deleted when you close the browser.</div>
                     <div className={'link-danger'}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;But, it can be deleted somehow. So, please keep your notes in a safe place.</div>
