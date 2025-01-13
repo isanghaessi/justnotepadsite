@@ -5,6 +5,9 @@ import svgr from 'vite-plugin-svgr';
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [react(), svgr()],
+    build: {
+        target: ['es2015']
+    },
     resolve: {
         alias: {
             '@': '/src',
