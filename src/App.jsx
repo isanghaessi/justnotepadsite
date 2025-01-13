@@ -83,7 +83,8 @@ function App() {
     return (<>
         <Helmet>
             <title>Just notepad</title>
-            <meta name="description" content="Just notepad"/>
+            <meta name="description" content="Just notepad for taking memos."/>
+            <meta name="keywords" content="notepad, notes, note, justnotepad, 메모, 메모장, 노트"/>
         </Helmet>
         <div className={'position-relative min-vw-100 min-vh-100 p-5 d-flex flex-column align-items-center'}>
             <nav className={'navbar navbar-light w-100'}>

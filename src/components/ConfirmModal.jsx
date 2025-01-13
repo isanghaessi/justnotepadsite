@@ -13,12 +13,7 @@ function ConfirmModal({isShow, onConfirm, onCancel}) {
         document.getElementById(CANCEL_BUTTON_ID).focus();
     }, [isShow]);
 
-    return (<>
-        <Helmet>
-            <title>Confirm Modal</title>
-            <meta name="description" content="Confirm modal to delete memo"/>
-        </Helmet>
-        <div className={classNames('modal', {'d-block': isShow})} tabIndex={-1} onClick={onCancel}>
+    return  <div className={classNames('modal', {'d-block': isShow})} tabIndex={-1} onClick={onCancel}>
             <div className="modal-dialog" onClick={(event) => event.stopPropagation()}>
                 <div className="modal-content">
                     <div className="modal-header">
@@ -31,7 +26,6 @@ function ConfirmModal({isShow, onConfirm, onCancel}) {
                 </div>
             </div>
         </div>
-    </>)
 }
 
 export default ConfirmModal
